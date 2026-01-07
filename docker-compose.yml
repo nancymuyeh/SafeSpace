@@ -1,0 +1,21 @@
+services:
+  db:
+    image: bitnami/postgresql
+    restart: always
+    environment:
+      POSTGRESQL_PASSWORD: mysecretpassword
+      POSTGRESQL_DATABASE: postgres
+    ports:
+      - '5433:5432'
+  backend:
+    build: backend
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - '8080:5173'
