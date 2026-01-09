@@ -10,7 +10,7 @@ RUN npm install
 COPY . .
 
 # Stage 2: Serve the application
-FROM node:20-alpine
+FROM node:20-slim
 
 WORKDIR /app
 
