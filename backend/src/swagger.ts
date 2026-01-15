@@ -18,30 +18,49 @@ const swaggerDefinition = {
       Story: {
         type: 'object',
         properties: {
-          id: {
-            type: 'integer',
-          },
-          content: {
-            type: 'string',
-          },
-          mood: {
-            type: 'string',
-          },
-          createdAt: {
-            type: 'string',
-            format: 'date-time',
-          },
+          id: { type: 'string', format: 'uuid' },
+          content: { type: 'string' },
+          mood: { type: 'string' },
+          userId: { type: 'string', format: 'uuid', nullable: true },
+          createdAt: { type: 'string', format: 'date-time' },
         },
       },
       NewStory: {
         type: 'object',
+        required: ['content', 'mood'],
         properties: {
-          content: {
-            type: 'string',
-          },
-          mood: {
-            type: 'string',
-          },
+          content: { type: 'string' },
+          mood: { type: 'string' },
+          userId: { type: 'string', format: 'uuid' },
+        },
+      },
+      Reaction: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          storyId: { type: 'string', format: 'uuid' },
+          type: { type: 'string' },
+          createdAt: { type: 'string', format: 'date-time' },
+        },
+      },
+      Report: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          storyId: { type: 'string', format: 'uuid' },
+          reason: { type: 'string' },
+          createdAt: { type: 'string', format: 'date-time' },
+        },
+      },
+      Resource: {
+        type: 'object',
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          title: { type: 'string' },
+          description: { type: 'string' },
+          url: { type: 'string' },
+          type: { type: 'string' },
+          createdAt: { type: 'string', format: 'date-time' },
         },
       },
     },
@@ -50,7 +69,7 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./src/index.ts'],
+  apis: ['./src/routes/*.ts'],
 };
 
 export const swaggerSpec = swaggerJSDoc(options);

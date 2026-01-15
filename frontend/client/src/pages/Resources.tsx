@@ -1,7 +1,12 @@
 import { Phone, Globe, Shield, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useGetResources } from "@/hooks/use-resources";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Resources() {
+  const { data: resources, isLoading } = useGetResources();
+
+  // Keep emergency hotlines hardcoded as they are critical and shouldn't depend on DB
   const emergencyResources = [
     {
       name: "National Suicide Prevention Lifeline",
@@ -29,7 +34,7 @@ export default function Resources() {
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl font-display font-bold text-foreground mb-4">Support Resources</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Professional help is available. If you or someone you know is in crisis, 
+            Professional help is available. If you or someone you know is in crisis,
             please reach out to these organizations immediately.
           </p>
         </div>
@@ -44,7 +49,7 @@ export default function Resources() {
             </div>
             <h2 className="text-2xl font-bold">Emergency Hotlines</h2>
           </div>
-          
+
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {emergencyResources.map((resource) => (
               <div key={resource.name} className="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-md transition-all border-l-4 border-l-red-500">
@@ -60,6 +65,52 @@ export default function Resources() {
           </div>
         </section>
 
+        {/* Additional Resources from DB */}
+        {isLoading ? (
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <Skeleton className="h-10 w-10 rounded-lg" />
+              <Skeleton className="h-8 w-48" />
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-32 rounded-2xl" />
+              ))}
+            </div>
+          </section>
+        ) : resources && resources.length > 0 ? (
+          <section className="mb-16">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2 bg-primary/10 rounded-lg text-primary">
+                <Globe className="w-6 h-6" />
+              </div>
+              <h2 className="text-2xl font-bold">Additional Resources</h2>
+            </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              {resources.map((resource) => (
+                <a
+                  key={resource.id}
+                  href={resource.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white p-6 rounded-2xl border shadow-sm hover:shadow-md transition-all group"
+                >
+                  <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
+                    {resource.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-4">
+                    {resource.description}
+                  </p>
+                  <div className="flex items-center text-primary text-sm font-medium">
+                    <ExternalLink className="w-4 h-4 mr-1" />
+                    Visit Resource
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {/* Therapy Section */}
         <section className="mb-16">
           <div className="flex items-center gap-3 mb-6">
@@ -74,7 +125,7 @@ export default function Resources() {
               <div className="flex-1">
                 <h3 className="text-xl font-bold mb-3">Professional Directory</h3>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  Connecting with a licensed therapist can be a transformative step in your mental health journey. 
+                  Connecting with a licensed therapist can be a transformative step in your mental health journey.
                   Browse our partner directories to find a specialist who fits your needs, location, and insurance.
                 </p>
                 <div className="flex gap-4 flex-wrap">

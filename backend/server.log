@@ -1,0 +1,33 @@
+nohup: ignoring input
+
+> safespace-backend@1.0.0 dev
+> tsx src/index.ts
+
+Example app listening on port 3000
+DrizzleQueryError: Failed query: select "id", "content", "mood", "user_id", "created_at" from "stories" order by "stories"."created_at" desc
+params: 
+    at PostgresJsPreparedQuery.queryWithCache (/home/nancy-muyeh/uni-projects/SafeSpace/backend/node_modules/src/pg-core/session.ts:73:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async <anonymous> (/home/nancy-muyeh/uni-projects/SafeSpace/backend/node_modules/src/postgres-js/session.ts:58:17)
+    at async Object.getStories (/home/nancy-muyeh/uni-projects/SafeSpace/backend/src/services/story.service.ts:17:12)
+    at async getStoriesHandler (/home/nancy-muyeh/uni-projects/SafeSpace/backend/src/controllers/story.controller.ts:28:25) {
+  query: 'select "id", "content", "mood", "user_id", "created_at" from "stories" order by "stories"."created_at" desc',
+  params: [],
+  cause: PostgresError: relation "stories" does not exist
+      at ErrorResponse (/home/nancy-muyeh/uni-projects/SafeSpace/backend/node_modules/postgres/cjs/src/connection.js:815:30)
+      at handle (/home/nancy-muyeh/uni-projects/SafeSpace/backend/node_modules/postgres/cjs/src/connection.js:489:6)
+      at Socket.data (/home/nancy-muyeh/uni-projects/SafeSpace/backend/node_modules/postgres/cjs/src/connection.js:324:9)
+      at Socket.emit (node:events:519:28)
+      at addChunk (node:internal/streams/readable:561:12)
+      at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+      at Readable.push (node:internal/streams/readable:392:5)
+      at TCP.onStreamRead (node:internal/stream_base_commons:189:23) {
+    severity_local: 'ERROR',
+    severity: 'ERROR',
+    code: '42P01',
+    position: '62',
+    file: 'parse_relation.c',
+    line: '1466',
+    routine: 'parserOpenTable'
+  }
+}

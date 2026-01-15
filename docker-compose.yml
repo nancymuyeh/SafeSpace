@@ -7,15 +7,36 @@ services:
       POSTGRESQL_DATABASE: postgres
     ports:
       - '5433:5432'
+    networks:
+      - backend-network
   backend:
     build: backend
     ports:
       - '3000:3000'
     depends_on:
       - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASSWORD: mysecretpassword
+      DB_NAME: postgres
+      NODE_ENV: production
+    networks:
+      - backend-network
+      - frontend-network
   frontend:
     build:
       context: frontend
       dockerfile: Dockerfile.dev
     ports:
       - '8080:5173'
+    networks:
+      - frontend-network
+
+networks:
+  backend-network:
+    driver: bridge
+  frontend-network:
+    driver: bridge
+

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useStories } from "@/hooks/use-stories";
+import { useGetStories } from "@/hooks/use-stories";
 import { StoryCard } from "@/components/StoryCard";
 import { CreateStoryModal } from "@/components/CreateStoryModal";
 import { Button } from "@/components/ui/button";
@@ -10,9 +10,9 @@ import { MessageSquareDashed } from "lucide-react";
 export default function Community() {
   const [filter, setFilter] = useState<string>("all");
   const [sort, setSort] = useState<"newest" | "popular">("newest");
-  
-  const { data: stories, isLoading, error } = useStories(
-    filter === "all" ? undefined : filter, 
+
+  const { data: stories, isLoading, error } = useGetStories(
+    filter === "all" ? undefined : filter,
     sort
   );
 
@@ -38,7 +38,7 @@ export default function Community() {
           <aside className="lg:col-span-1 space-y-6">
             <div className="bg-white p-5 rounded-2xl shadow-sm border sticky top-24">
               <h3 className="font-semibold mb-4 text-sm uppercase tracking-wider text-muted-foreground">Filters</h3>
-              
+
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Mood</label>
@@ -93,8 +93,8 @@ export default function Community() {
             ) : error ? (
               <div className="text-center py-12 bg-red-50 rounded-2xl border border-red-100">
                 <p className="text-red-600 font-medium">Failed to load stories.</p>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   className="text-red-700"
                   onClick={() => window.location.reload()}
                 >

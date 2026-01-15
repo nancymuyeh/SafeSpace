@@ -17,6 +17,7 @@
     "@types/node": "^25.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "bad-words": "^4.0.0",
     "cors": "^2.8.5",
     "drizzle-kit": "^0.31.8",
     "drizzle-orm": "^0.45.1",
@@ -25,6 +26,10 @@
     "postgres": "^3.4.8",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@types/bad-words": "^3.0.3"
   }
 }

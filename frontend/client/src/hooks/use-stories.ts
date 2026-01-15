@@ -2,30 +2,38 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./use-toast";
 import { api } from "../lib/api";
 
-// Define the Story interface based on the schema
 export interface Story {
-  id: number;
+  id: string;
   content: string;
   mood: string;
   createdAt: string;
 }
 
-// CreateStory type omits 'id' and 'createdAt' for creation
-export type CreateStory = Omit<Story, 'id' | 'createdAt'>;
+export interface NewStory {
+  content: string;
+  mood: string;
+}
 
-export function useGetStories(mood?: string, sort?: 'newest' | 'popular') {
+export interface ReactionInput {
+  storyId: string;
+  type: string;
+}
+
+export interface ReportInput {
+  storyId: string;
+  reason: string;
+}
+
+export function useGetStories(filter?: string, sort?: 'newest' | 'popular') {
   return useQuery<Story[]>({
-    queryKey: ['stories', { mood, sort }],
+    queryKey: ['stories', filter, sort],
     queryFn: async () => {
-      const response = await api.get('/stories');
-      let stories: Story[] = response.data;
-      if (mood && mood !== 'all') {
-        stories = stories.filter(s => s.mood === mood);
-      }
-      if (sort === 'popular') {
-        // Add sorting by reactions when that is implemented
-      } else {
-        stories.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      const { data } = await api.get('/stories');
+      let stories = data;
+      // Client-side filtering/sorting for now since backend only does basic list
+      // In production move this to backend params
+      if (filter && filter !== 'all') {
+        stories = stories.filter((s: Story) => s.mood === filter);
       }
       return stories;
     },
@@ -36,10 +44,10 @@ export function useCreateStory() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  return useMutation<Story, unknown, CreateStory>({
-    mutationFn: async (data: CreateStory) => {
-      const response = await api.post('/stories', data);
-      return response.data;
+  return useMutation({
+    mutationFn: async (story: NewStory) => {
+      const { data } = await api.post('/stories', story);
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stories'] });
@@ -54,23 +62,23 @@ export function useCreateStory() {
 export function useAddReaction() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ storyId, type }: { storyId: number; type: string }) => {
-      // Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 200));
-      return { id: Math.random(), storyId, type };
+    mutationFn: async ({ storyId, type }: ReactionInput) => {
+      const { data } = await api.post(`/stories/${storyId}/reactions`, { type });
+      return data;
     },
     onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['stories'] });
-    }
+      // In a real app we might update optimistic cache, but invalidate is safer for MVP
+      queryClient.invalidateQueries({ queryKey: ['stories'] });
+    },
   });
 }
 
 export function useReportStory() {
   const { toast } = useToast();
   return useMutation({
-    mutationFn: async ({ storyId, reason }: { storyId: number; reason: string }) => {
-      // Replace with actual API call
-      await new Promise(resolve => setTimeout(resolve, 500));
+    mutationFn: async ({ storyId, reason }: ReportInput) => {
+      const { data } = await api.post(`/stories/${storyId}/report`, { reason });
+      return data;
     },
     onSuccess: () => {
       toast({
@@ -80,3 +88,7 @@ export function useReportStory() {
     },
   });
 }
+
+// Backward compatibility alias
+export const useStories = useGetStories;
+
