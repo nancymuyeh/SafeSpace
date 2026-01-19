@@ -1,20 +1,45 @@
+# ===============================
+# Global build argument
+# ===============================
+ARG NODE_VERSION=20
+
+# ===============================
 # Stage 1: Dependencies
-FROM node:20-alpine AS deps
+# ===============================
+FROM node:${NODE_VERSION}-alpine AS deps
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm ci
 
+
+# ===============================
 # Stage 2: Test
-FROM node:20-alpine AS test
+# ===============================
+FROM node:${NODE_VERSION}-alpine AS test
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Runtime env (used during tests if needed)
+ENV SALT=""
+
 RUN npm test
 
+
+# ===============================
 # Stage 3: Dev runtime
-FROM node:20-alpine AS dev
+# ===============================
+FROM node:${NODE_VERSION}-alpine AS dev
 WORKDIR /app
+
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Runtime environment variables
+ENV NODE_ENV=development
+ENV SALT=""
+
 EXPOSE 8080
 CMD ["npm", "run", "dev"]
