@@ -1,0 +1,12 @@
+{
+  "realm": "safespace-realm",
+  "auth-server-url": "http://keycloak:8080/",
+  "ssl-required": "none",
+  "resource": "safespace-backend",
+  "verify-token-audience": true,
+  "credentials": {
+    "secret": "your-client-secret"
+  },
+  "confidential-port": 0,
+  "policy-enforcer": {}
+}

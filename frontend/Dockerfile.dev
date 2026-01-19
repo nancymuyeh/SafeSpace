@@ -1,13 +1,20 @@
-FROM node:20-alpine
-
+# Stage 1: Dependencies
+FROM node:20-alpine AS deps
 WORKDIR /app
-
 COPY package*.json ./
+RUN npm ci
 
-RUN npm install
-
+# Stage 2: Test
+FROM node:20-alpine AS test
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN npm test
 
+# Stage 3: Dev runtime
+FROM node:20-alpine AS dev
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 EXPOSE 8080
-
 CMD ["npm", "run", "dev"]

@@ -1,13 +1,12 @@
 import { Link, useLocation } from "wouter";
-import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { HeartHandshake, Home, MessageCircle, LogIn, LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import keycloak from "@/lib/keycloak";
 
 export function Navigation() {
   const [location] = useLocation();
-  const { user, logout, isLoggingOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isActive = (path: string) => location === path;
@@ -44,16 +43,15 @@ export function Navigation() {
           
           <div className="h-6 w-px bg-border mx-2" />
 
-          {user ? (
+          {keycloak.authenticated ? (
             <div className="flex items-center gap-4">
               <span className="text-sm font-medium text-muted-foreground">
-                Hi, Stranger
+                Hi, {keycloak.tokenParsed?.preferred_username}
               </span>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
-                onClick={() => logout()}
-                disabled={isLoggingOut}
+                onClick={() => keycloak.logout()}
                 className="text-muted-foreground hover:text-destructive"
               >
                 <LogOut className="w-4 h-4 mr-2" />
@@ -62,7 +60,7 @@ export function Navigation() {
             </div>
           ) : (
             <Button variant="outline" size="sm" asChild className="rounded-full">
-              <a href="/api/login">
+              <a onClick={() => keycloak.login()}>
                 <LogIn className="w-4 h-4 mr-2" />
                 Login
               </a>
@@ -105,17 +103,17 @@ export function Navigation() {
                 </Link>
               ))}
               <div className="h-px bg-border my-2" />
-              {user ? (
+              {keycloak.authenticated ? (
                 <button
-                  onClick={() => logout()}
+                  onClick={() => keycloak.logout()}
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors w-full text-left"
                 >
                   <LogOut className="w-5 h-5" />
                   Logout
                 </button>
               ) : (
-                <a 
-                  href="/api/login"
+                <a
+                  onClick={() => keycloak.login()}
                   className="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary text-primary-foreground font-medium justify-center"
                 >
                   <LogIn className="w-5 h-5" />
