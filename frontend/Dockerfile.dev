@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Runtime env (used during tests if needed)
+# Runtime env 
 ENV SALT=""
 
 RUN npm test
